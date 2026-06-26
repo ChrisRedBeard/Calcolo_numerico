@@ -1,4 +1,8 @@
 import numpy as np
+from tabulate import tabulate
+
+APICE_MENO_UNO = "\u207B\u00B9"
+LAMBDA = "\u03BB"
 
 # Definizione della matrice A
 A = np.array([
@@ -11,17 +15,18 @@ print("="*40)
 print("1. Calcolo autovalori e autovettori")
 print("="*40)
 print("\n")
-# La funzione eig restituisce gli autovalori in D_diag e la matrice degli autovettori in V
+
+# eig restituisce gli autovalori nell'array "autovalori" e gli autovettori (per colonna) nella matrice V
 autovalori, V = np.linalg.eig(A)
 
-print("Autovalori (\u03BB):")
-print(autovalori)
+print(f"Autovalori ({LAMBDA}):")
+print(tabulate([autovalori],tablefmt="fancy_grid"))
 print("\nMatrice degli autovettori (V):")
-print(V)
+print(tabulate(V,tablefmt="fancy_grid"))
 
 print("\n")
 print("="*40)
-print("2. Verifica numerica A*v_i = \u03BB_i*v_i")
+print(f"2. Verifica numerica A*v_i = {LAMBDA}_i*v_i")
 print("="*40)
 print("\n")
 for i in range(len(autovalori)):
@@ -35,7 +40,7 @@ for i in range(len(autovalori)):
     
     # Verifico se sono uguali (usando allclose per tollerare errori di arrotondamento macchina)
     verifica = np.allclose(lato_sinistro, lato_destro)
-    print(f"Autovettore {i+1}: Verifica A*v_{i} = \u03BB_i*v_{i} -> {verifica}")
+    print(f"Autovettore {i+1}: Verifica A*v_{i+1} = {LAMBDA}_{i+1}*v_{i+1} -> {verifica}")
 
 print("\n")
 print("="*40)
@@ -51,9 +56,9 @@ print(f"Rango della matrice V= {rango_V}")
 print(f"Gli autovettori sono linearmente indipendenti? {'sì' if indipendenti else 'no'}")
 
 print("\n")
-print("="*40)
-print("4. Costruzione di V, D e verifica A = V*D*V^-1")
-print("="*40)
+print("="*50)
+print(f"4. Costruzione di V, D e verifica A = V @ D @ V{APICE_MENO_UNO}")
+print("="*50)
 print("\n")
 
 
@@ -66,28 +71,20 @@ V_inv = np.linalg.inv(V)
 # Ricostruisco A e verifico
 A_ricostruita = V @ D @ V_inv
 
-print("Matrice V * D * V^-1 calcolata:")
-print(A_ricostruita)
+print(f"Matrice V * D * V{APICE_MENO_UNO} calcolata:")
+
+print(tabulate(A_ricostruita,tablefmt="fancy_grid",floatfmt=".6e"))
 verifica_A = np.allclose(A, A_ricostruita)
-print(f"La relazione A = V*D*V^-1 è verificata numericamente? {'sì' if verifica_A else 'no'}")
-
-
-# Imposto NumPy per non usare la notazione scientifica per numeri piccolissimi
-# stampandoli direttamente come zero
-np.set_printoptions(suppress=True)
-print("\n\nMatrice V * D * V^-1 calcolata con suppress=True:")
-print(V @ D @ np.linalg.inv(V))
-
-
-
-
+print(f"La relazione A = V @ D @ V{APICE_MENO_UNO} è verificata numericamente? {'sì' if verifica_A else 'no'}")
 
 
 print("\n")
 print("="*40)
 print("5. Condizionamento della matrice V")
 print("="*40)
-print("\n")
 # Calcolo del numero di condizionamento (in norma 2 di default)
 cond_V = np.linalg.cond(V)
 print(f"Numero di condizionamento di V: {cond_V:.6f}")
+
+print("\n")
+print("-- Programma terminato --")

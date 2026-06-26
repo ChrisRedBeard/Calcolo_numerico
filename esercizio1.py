@@ -84,8 +84,9 @@ P_eq, L_eq, U_eq, Q_eq = fatt_lu_pivot_totale(V_eq)
 
 # 2. Risoluzione del sistema strutturato a passi:
 # Passo a) Moltiplichiamo il termine noto per P: y_perm = P * y
-# (Nota: fare P @ y_eq equivale matematicamente a fare P.T @ y_eq a seconda di come è costruita P, 
-# avendo scambiato le righe di un'identità facciamo direttamente il prodotto della matrice P ottenuta)
+# (P è la matrice di permutazione di RIGA, costruita scambiando le righe
+# dell'identità in parallelo a quelle di V; quindi P @ y applica al termine
+# noto le stesse permutazioni di riga subite dalla matrice del sistema.)
 y_perm_eq = P_eq @ y_eq
 
 # Passo b) Sostituzione in avanti per risolvere L * z = y_perm
@@ -94,8 +95,7 @@ z_eq = las.solve_triangular(L_eq, y_perm_eq, lower=True)
 # Passo c) Sostituzione all'indietro per risolvere U * a_tilde = z
 a_tilde = las.solve_triangular(U_eq, z_eq)
 
-# Passo d) Poiché U * (Q.T * a) = P * y, allora a_tilde = Q.T * a. 
-# Per ricavare a dobbiamo moltiplicare per Q a sinistra: a = Q * a_tilde
+# Passo d) Poiché L * U * (Q.T * a) = P * y, allora a_tilde = Q.T * a.
 a_eq = Q_eq @ a_tilde
 
 
@@ -226,6 +226,6 @@ intestazioni = ["Metodo", "Cond(V)", "Cond(L)", "Cond(U)", "Residuo Sistema", "E
 print("\n--- TABELLA DI CONFRONTO ---")
 # 'github' genera una tabella in stile Markdown (con la riga sotto l'intestazione)
 # floatfmt=".5e" applica automaticamente la notazione scientifica a tutti i numeri.
-print(tabulate(righe, headers=intestazioni, tablefmt="github", floatfmt=".5e"))
+print(tabulate(righe, headers=intestazioni, tablefmt="fancy_grid", floatfmt=".5e"))
 print("\n-- Chiudere la finestra del grafico per terminare il programma --\n")
 plt.show()
