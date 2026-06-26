@@ -33,21 +33,21 @@ V_eq = np.vander(x_eq, increasing=True)
 def fatt_lu_pivot_totale(A):
 
     n = A.shape[0]
-    # Inizializziamo le matrici di permutazione come matrici identità
+    # Inizializzo le matrici di permutazione come matrici identità
     P = np.eye(n)
     Q = np.eye(n)
     
-    # Lavoriamo su una copia per non modificare la matrice originale
+    # Lavoro su una copia per non modificare la matrice originale
     A_lu = A.copy().astype(float)
     
     for k in range(n - 1):
         # 1. RICERCA DEL PIVOT TOTALE
-        # Cerchiamo il massimo valore assoluto nella sottomatrice A_lu[k:n, k:n]
+        # Cerco il massimo valore assoluto nella sottomatrice A_lu[k:n, k:n]
         sub_matrix = np.abs(A_lu[k:n, k:n])
         # r_rel e c_rel sono gli indici del massimo relativi alla sottomatrice
         r_rel, c_rel = np.unravel_index(np.argmax(sub_matrix), sub_matrix.shape)
         
-        # Riportiamo gli indici assoluti nella matrice intera
+        # Riporto gli indici assoluti nella matrice intera
         r = r_rel + k
         c = c_rel + k
         
@@ -66,12 +66,12 @@ def fatt_lu_pivot_totale(A):
             raise ValueError("La matrice ha un elemento pivotale quasi nullo. Sistema singolare o malcondizionato.")
             
         # 4. CALCOLO DEI MOLTIPLICATORI E AGGIORNAMENTO matrice (Algoritmo di Gauss)
-        # Memorizziamo i moltiplicatori nella parte inferiore di A_lu
+        # Memorizzo moltiplicatori nella parte inferiore di A_lu
         A_lu[k+1:n, k] = A_lu[k+1:n, k] / A_lu[k, k] 
         # Aggiorniamo la sottomatrice restante utilizzando il prodotto esterno
         A_lu[k+1:n, k+1:n] -= np.outer(A_lu[k+1:n, k], A_lu[k, k+1:n])
         
-    # Estraiamo L e U dalla matrice combinata A_lu
+    # Estraggo L e U dalla matrice combinata A_lu
     # L ha i moltiplicatori sotto la diagonale e 1 sulla diagonale
     L = np.tril(A_lu, -1) + np.eye(n)
     # U ha gli elementi sulla diagonale e sopra
@@ -79,7 +79,7 @@ def fatt_lu_pivot_totale(A):
     
     return P, L, U, Q
 
-# 1. Calcoliamo la fattorizzazione con il pivot totale sulla matrice di Vandermonde
+# 1. Calcolo la fattorizzazione con il pivot totale sulla matrice di Vandermonde
 P_eq, L_eq, U_eq, Q_eq = fatt_lu_pivot_totale(V_eq)
 
 # 2. Risoluzione del sistema strutturato a passi:
@@ -131,18 +131,18 @@ y_esatto = f(x_plot)
 y_plot_eq = np.polyval(a_eq[::-1], x_plot)
 y_plot_cheb = np.polyval(a_cheb[::-1], x_plot)
 
-# Usiamo subplots per avere un controllo migliore sulla figura
+# Uso subplots per avere un controllo migliore sulla figura
 fig, ax = plt.subplots(figsize=(10, 6))
 
-# Spostiamo il grafico principale un po' verso destra per fare spazio ai bottoni
+# Sposto il grafico principale un po' verso destra per fare spazio ai bottoni
 plt.subplots_adjust(left=0.25)
 
-# 1. Disegniamo le linee e i nodi, SALVANDOLI in delle variabili.
+# 1. Disegno le linee e i nodi, SALVANDOLI in delle variabili.
 l0, = ax.plot(x_plot, y_esatto, 'k-', label='f(x) Esatta', linewidth=2)
 l1, = ax.plot(x_plot, y_plot_eq, 'r--', label='Equispaziati')
 l2, = ax.plot(x_plot, y_plot_cheb, 'b-.', label='Chebyshev')
 
-# Salviamo anche i nodi così li nascondiamo assieme alle curve
+# Salvo anche i nodi così li nascondo assieme alle curve
 p1, = ax.plot(x_eq, y_eq, 'ro', markersize=6)
 p2, = ax.plot(x_cheb, y_cheb, 'bs', markersize=6)
 
@@ -155,7 +155,7 @@ ax.grid(True)
 # --- 2. Selezione bottoni  ---
 ax_check = plt.axes([0.02, 0.45, 0.18, 0.2]) 
 
-# Rimuoviamo il riquadro nero attorno all'area dei bottoni
+# Rimuovo il riquadro nero attorno all'area dei bottoni
 for spine in ax_check.spines.values():
     spine.set_visible(False)
 ax_check.set_facecolor('#f4f4f4') # Sfondo grigino elegante
@@ -164,7 +164,7 @@ labels = ['f(x) Esatta', 'Equispaziati', 'Chebyshev']
 visibility = [True, True, True] 
 colori = ['black', 'red', 'blue']
 
-# Moltiplichiamo per 3 le liste a singolo elemento per evitare l'errore del cycler
+# Moltiplico per 3 le liste a singolo elemento per evitare l'errore del cycler
 check = CheckButtons(
     ax=ax_check, 
     labels=labels, 
@@ -222,9 +222,10 @@ righe = [
 # 2. Definisco i nomi delle colonne
 intestazioni = ["Metodo", "Cond(V)", "Cond(L)", "Cond(U)", "Residuo Sistema", "Errore Max (550 pt)"]
 
-# 3. Stampa la tabella
+# 3. Stampo la tabella
 print("\n--- TABELLA DI CONFRONTO ---")
-# 'github' genera una tabella in stile Markdown (con la riga sotto l'intestazione)
+
+
 # floatfmt=".5e" applica automaticamente la notazione scientifica a tutti i numeri.
 print(tabulate(righe, headers=intestazioni, tablefmt="fancy_grid", floatfmt=".5e"))
 print("\n-- Chiudere la finestra del grafico per terminare il programma --\n")
